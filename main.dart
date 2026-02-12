@@ -53,8 +53,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   void _login() {
-    if (_usernameController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Per favore, compila tutti i campi")),
       );
@@ -81,18 +80,12 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             children: [
-              Image.asset(
-                "assets/Favicon-DiMaggio@2x.png",
-                width: 110,
-              ),
+              Image.asset("assets/Favicon-DiMaggio@2x.png", width: 110),
               const SizedBox(height: 16),
               const Text(
                 "I.T.E.T. Luigi Di Maggio",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
               const Text(
@@ -164,9 +157,26 @@ class _CardPageState extends State<CardPage>
   late final AnimationController _controller;
   bool _isFront = true;
 
-  // Palette scuola: blu e giallo oro
-  final Color color1 = const Color(0xFF003399);
-  final Color color2 = const Color(0xFFFFD700);
+  late final Color color1;
+  late final Color color2;
+
+  final Random random = Random();
+
+  // Palette colori armonici sicuri
+  final List<Color> safeColors = [
+    Color(0xFF003399), // blu logo
+    Color(0xFFFFD700), // giallo logo
+    Color(0xFF4CAF50), // verde tenue
+    Color(0xFFFFA726), // arancio pastello
+    Color(0xFFBA68C8), // lilla pastello
+  ];
+
+  Color _randomShade(Color base) {
+    int r = (base.red + random.nextInt(40) - 20).clamp(0, 255);
+    int g = (base.green + random.nextInt(40) - 20).clamp(0, 255);
+    int b = (base.blue + random.nextInt(40) - 20).clamp(0, 255);
+    return Color.fromARGB(255, r, g, b);
+  }
 
   @override
   void initState() {
@@ -175,6 +185,16 @@ class _CardPageState extends State<CardPage>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
+
+    // Scegli due colori diversi dalla palette
+    int firstIndex = random.nextInt(safeColors.length);
+    int secondIndex;
+    do {
+      secondIndex = random.nextInt(safeColors.length);
+    } while (secondIndex == firstIndex);
+
+    color1 = _randomShade(safeColors[firstIndex]);
+    color2 = _randomShade(safeColors[secondIndex]);
   }
 
   void _flipCard() {
@@ -208,7 +228,6 @@ class _CardPageState extends State<CardPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Carta centrata
             GestureDetector(
               onTap: _flipCard,
               child: AnimatedBuilder(
@@ -216,7 +235,6 @@ class _CardPageState extends State<CardPage>
                 builder: (_, __) {
                   final angle = _controller.value * pi;
                   final isUnder = angle > pi / 2;
-
                   return Stack(
                     children: [
                       Transform(
@@ -247,10 +265,7 @@ class _CardPageState extends State<CardPage>
             const SizedBox(height: 30),
             Text(
               "Benvenuto, ${widget.nome}!",
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             const Text(
@@ -263,19 +278,14 @@ class _CardPageState extends State<CardPage>
     );
   }
 
-  /// FRONT — SOLO LOGO
   Widget _frontCard() {
     return _baseCard(
       child: Center(
-        child: Image.asset(
-          "assets/Favicon-DiMaggio@2x.png",
-          width: 150,
-        ),
+        child: Image.asset("assets/Favicon-DiMaggio@2x.png", width: 150),
       ),
     );
   }
 
-  /// BACK — INFO + LOGO
   Widget _backCard() {
     return _baseCard(
       child: Stack(
@@ -299,10 +309,7 @@ class _CardPageState extends State<CardPage>
             right: 6,
             child: Opacity(
               opacity: 0.85,
-              child: Image.asset(
-                "assets/Favicon-DiMaggio@2x.png",
-                width: 80,
-              ),
+              child: Image.asset("assets/Favicon-DiMaggio@2x.png", width: 80),
             ),
           ),
         ],
@@ -310,7 +317,6 @@ class _CardPageState extends State<CardPage>
     );
   }
 
-  /// BASE CARD
   Widget _baseCard({required Widget child}) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.88,
@@ -319,7 +325,7 @@ class _CardPageState extends State<CardPage>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         gradient: LinearGradient(
-          colors: [color1.withOpacity(0.95), color2.withOpacity(0.95)],
+          colors: [color1, color2],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -336,20 +342,20 @@ class _CardPageState extends State<CardPage>
   }
 
   Widget _label(String text) => Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          color: Colors.white70,
-          letterSpacing: 1.6,
-        ),
-      );
+    text,
+    style: const TextStyle(
+      fontSize: 13,
+      color: Colors.white70,
+      letterSpacing: 1.6,
+    ),
+  );
 
   Widget _value(String text) => Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 22,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+    text.toUpperCase(),
+    style: const TextStyle(
+      fontSize: 22,
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }
